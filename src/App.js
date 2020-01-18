@@ -1,26 +1,58 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from "react";
+import AddTask from "./components/AddTask";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [tasks, setTasks] = useState([])
+
+    useEffect(() => {
+        const storedTasks = localStorage.getItem('tasks')
+
+        if (storedTasks) {
+            setTasks(JSON.parse(storedTasks))
+        }
+    }, [])
+
+    return (
+        <div>
+            <AddTask onAdd={nome => {
+                const newTasks = tasks.concat({
+                    id: new Date().getTime(),
+                    name: nome,
+                    completed: false
+                });
+
+                localStorage.setItem('tasks', JSON.stringify(newTasks))
+
+                setTasks(newTasks);
+            }}/>
+
+            <div>
+                <ol>
+                    {tasks.map(task => {
+                        return <li
+                            onClick={() => {
+                                const index = tasks.findIndex(aTask => aTask.id === task.id)
+
+                                setTasks(tasks.filter((a, indexB) => indexB !== index))
+                            }}
+                            title={task.id}
+                            key={task.id}>{task.name}</li>
+                    })}
+                </ol>
+            </div>
+        </div>
+    )
 }
 
-export default App;
+export default App
+
+
+function getUpperName(name) {
+    return name.toUpperCase()
+}
+
+const getUpperArrowName = name => {
+    return name.toUpperCase()
+}
+
+const getShort = name => name.toUpperCase()
